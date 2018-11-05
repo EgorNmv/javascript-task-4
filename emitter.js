@@ -4,13 +4,15 @@
  * Сделано задание на звездочку
  * Реализованы методы several и through
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Возвращает новый emitter
  * @returns {Object}
  */
 function getEmitter() {
+    const allevents = {};
+
     return {
 
         /**
@@ -18,26 +20,46 @@ function getEmitter() {
          * @param {String} event
          * @param {Object} context
          * @param {Function} handler
+         * @returns {Object}
          */
         on: function (event, context, handler) {
             console.info(event, context, handler);
+            if (!allevents[event]) {
+                allevents[event] = [];
+            }
+            allevents[event].push({ context, handler });
+
+            return this;
         },
 
         /**
          * Отписаться от события
          * @param {String} event
          * @param {Object} context
+         * @returns {Object}
          */
         off: function (event, context) {
             console.info(event, context);
+            allevents[event] = allevents[event].filter(i => i.context !== context);
+
+            return this;
         },
 
         /**
          * Уведомить о событии
          * @param {String} event
+         * @returns {Object}
          */
         emit: function (event) {
             console.info(event);
+            while (event !== '') {
+                if (allevents[event]) {
+                    allevents[event].map(i => i.handler.call(i.context));
+                }
+                event = event.substring(0, event.lastIndexOf('.'));
+            }
+
+            return this;
         },
 
         /**
