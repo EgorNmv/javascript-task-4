@@ -40,7 +40,11 @@ function getEmitter() {
          */
         off: function (event, context) {
             console.info(event, context);
-            allevents[event] = allevents[event].filter(i => i.context !== context);
+            const eventoff = Object.keys(allevents)
+                .filter(i => i === event || i.startsWith(event + '.'));
+            eventoff.forEach(i => {
+                allevents[i] = allevents[i].filter(j => j.context !== context);
+            });
 
             return this;
         },
